@@ -1,0 +1,104 @@
+ <!DOCTYPE html>
+ <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>lib</title>
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+   </head>
+   <body>
+        <h1 id="user">Hi USER Welcome to the Library Management System</h1>
+
+     <!-- INSERT SECTION -->
+     <h1 id="insert">Enter details to add a new book</h1>
+        <form id="insert_section">
+            <input id="ID" type="int" name="ID" placeholder="ID">
+            <input id="name" type="text" name="name" placeholder="Name">
+            <input id="author" type="text" name="author" placeholder="Author">
+            <button id="insert_btn" type="submit" name="submit">submit</button>
+        </form>
+        <div id="insert_response"></div>
+
+
+        <!-- SEARCH SECTION -->
+        <h1 id="search">Retreive all books</h1>
+        <button id="search_btn" type="search" name="search">search</button>
+        <div id="search_response"></div>
+
+
+        <!-- UPDATE SECTION -->
+        <h1 id="update">Update Book details</h1>
+        <form id="update_section">
+            <input id="U_ID" type="int" name="ID" placeholder="ID">
+            <input id="U_name" type="text" name="name" placeholder="Name">
+            <input id="U_author" type="text" name="author" placeholder="Author">
+            <button id="update_btn" type="update" name="update">update</button>
+        </form>
+        <div id="update_response"></div>
+      </body>
+   <script>
+
+       //Retrive all database
+         $("#search_btn").click(function () {
+            $.get("api/books.php", {}, function (response) {
+               console.log(response);
+               var jsonData = JSON.parse(response);
+               if (jsonData.Result === "True") {
+                  var booksContainer = $("#search_response");
+                  booksContainer.html(""); 
+                  // Iterate through each book entry
+                  $.each(jsonData, function (key, book) {
+                     if (key !== "Result" && key !== "Message") {
+                        var bookHtml = '<div class="book">' +
+                        '<strong>ID:</strong> ' + book.bookid + '<br>' +
+                        '<strong>Title:</strong> ' + book.bookName + '<br>' +
+                        '<strong>Author:</strong> ' + book.bookauthor +
+                        '</div>';
+                           booksContainer.append(bookHtml);
+                     }
+                  });
+               } 
+               else {
+                  // Display a message if there are no books
+                  $("#search_response").html("<p>No books found.</p>");
+               }
+            });
+         });
+
+         // Add a New Book (POST)
+         $("#insert_btn").click(function (e) {
+            e.preventDefault();
+            var name = $("#name").val();
+            var author = $("#author").val();
+            var id = $("#ID").val();
+            $.ajax({
+               url: "api/books.php",
+               type: "POST",
+               contentType: "application/json",
+               data: JSON.stringify({ ID: id, name: name, author: author }),
+               success: function (response) {
+                   $("#insert_response").html(response);
+               }
+            });
+         });
+
+         // Update Book Details (PUT)
+         $("#update_btn").click(function (e) {
+            e.preventDefault();
+            var name = $("#U_name").val();
+            var author = $("#U_author").val();
+            var id = $("#U_ID").val();
+            $.ajax({
+               url: `api/books.php?id=${id}`,
+               type: "PUT",
+               contentType: "application/json",
+               data: JSON.stringify({ ID: id, name: name, author: author }),
+               success: function (response) {
+                     $("#update_response").html(response);
+               }
+            });
+         });
+   </script>
+   
+ </html>  
