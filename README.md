@@ -14,7 +14,7 @@ Import the library.sql file to seed the database with the necessary table.
 Ensure you have a web server (like Apache) set up to serve the PHP files.
 
 4.Configuration:<br>
-Update database connection details in insert.php, search.php, and update.php with your MySQL credentials as follows.<br>
+Update database connection details in books.php with your MySQL credentials as follows.<br>
 $host = "your-host";<br>
 $user = "your-username";<br>
 $pass = "your-password";<br>
